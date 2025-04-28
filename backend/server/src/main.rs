@@ -1,6 +1,6 @@
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::thread;
-use std::io;
+use std::io::Write;
 
 fn main() {
     // .expect() deals with the result instead of a pattern match
@@ -25,6 +25,18 @@ fn main() {
     }
 }
 
-fn handle_client(stream: TcpStream, addr: SocketAddr) {
-    println!("Connected, yo!");
+fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
+    // tells client their info [temp stuff]
+
+    let addr_string: String = addr.to_string();
+    let prefix: &str = "Your info: ";
+    // the vec macro is awesome!
+    let parts: Vec<&[u8]> = vec![prefix.as_bytes(), addr_string.as_bytes()];
+    let msg_bytes: Vec<u8> = parts.concat();
+    
+    // ignore output with _
+    let _ = stream.write_all(&msg_bytes)
+        .expect("Failed to write!");
+
+    println!("Sent bytes!");
 }
