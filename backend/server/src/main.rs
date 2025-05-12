@@ -50,6 +50,7 @@ fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
         let addr_string: String = addr.to_string();
         let prefix: &str = "Your info: ";
         // the vec macro is awesome!
+        // vector of byte arrays (&[u8])
         let parts: Vec<&[u8]> = vec![prefix.as_bytes(), addr_string.as_bytes()];
         let msg_bytes: Vec<u8> = parts.concat();
     
