@@ -4,6 +4,12 @@ use std::io::Read;
 use dotenv::dotenv;
 use std::env;
 use common::Client;
+use chacha20poly1305::{
+    aead::{Aead, KeyInit, OsRng, AeadCore},
+    XChaCha20Poly1305,
+    Key,
+    XNonce,
+};
 
 fn main() {
     dotenv().ok(); // load .env into environment
@@ -18,12 +24,8 @@ fn main() {
 
     // read() reads bytes as soon as recieved
     let mut buf = [0u8; 1024];
-    //let _ = stream.read(&mut buf)
-    //    .expect("Failed to read!");
 
-    // print the bytes as string
-    //println!("{:?}", std::str::from_utf8(&buf).unwrap());
-
+    // this will happen once authentication goes through.
     loop {
         match stream.read(&mut buf) {
             Ok(0) => {

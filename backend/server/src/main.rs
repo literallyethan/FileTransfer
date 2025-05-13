@@ -1,11 +1,17 @@
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::thread;
-use std::io::{Write, BufWriter};
+use std::io::{BufWriter, Read, Write};
 use std::sync::{LazyLock, Mutex, Arc};
 use std::collections::HashMap;
 use dotenv::dotenv;
 use std::env;
 use common::Client;
+use chacha20poly1305::{
+    aead::{Aead, KeyInit, OsRng, AeadCore},
+    XChaCha20Poly1305,
+    Key,
+    XNonce,
+};
 
 // lazylock allows list to be sync-safe (I think, never used before)
 // TODO: refactor to use SocketAddr instead of u32
@@ -26,7 +32,7 @@ fn main() {
             Ok((stream, addr)) => {
                 // move keyword gives the variables to the handler
                 // so the handler can own them
-                thread::spawn(move || handle_client(stream, addr));
+                thread::spawn(move || authenticate_client(stream, addr));
             }
 
             Err(e) => {
@@ -34,6 +40,26 @@ fn main() {
             }
         }
     }
+}
+
+fn authenticate_client(mut stream: TcpStream, addr: SocketAddr)
+{
+    let mut buf = [0u8; 1024];
+    match stream.read(&mut buf) {
+        Ok(0) => {
+            println!("Client disconnected.");
+        }
+        Ok(n) => {
+            let text = std::str::from_utf8(&buf[..n]).unwrap_or("[Invalid UTF-8]");
+            //TODO: This would be auth info. parse and decrypt to auth
+
+        }
+        Err(e) => {
+            eprintln!("Failed to authenticate: {}", e);
+        }
+    }
+
+    handle_client(stream, addr);
 }
 
 fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
@@ -70,19 +96,8 @@ fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
         msg.push_str(&format!("Id: {}, Name: {}\n", id, &client.name));
     }
 
-    let mut writer = BufWriter::new(arc_stream.as_ref());
+    let mut writer: BufWriter<&TcpStream> = BufWriter::new(arc_stream.as_ref());
     writer.write_all(msg.as_bytes()).expect("Write failed");
     writer.flush().expect("Flush failed");
-
-    /*
-        job of handler:
-        -accept a client
-            -place client in list of available peers
-        -provide a list of connectable peers (:check:)
-        -recieve client's peer choice
-        -connect peers
-    */
-
-
 
 }
