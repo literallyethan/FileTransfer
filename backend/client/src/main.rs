@@ -35,8 +35,8 @@ fn main() {
                 println!("Received: {}", text);
 
                 // means server is ready to bind client to another
-                if text.contains("Ok!") {
-                    handle_peer();
+                if text.contains("Ok!/") {
+                    handle_peer(text.to_string());
                     break;
                 }
             }
@@ -48,7 +48,8 @@ fn main() {
     }
 }
 
-fn handle_peer()
-{
-    
+//before you can do this, the server needs to be forwarded so you can get public ip.
+//TODO: Add authentication so you can safely expose the server port.
+fn handle_peer(text: String) {
+
 }

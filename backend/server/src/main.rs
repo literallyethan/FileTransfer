@@ -8,6 +8,7 @@ use std::env;
 use common::Client;
 
 // lazylock allows list to be sync-safe (I think, never used before)
+// TODO: refactor to use SocketAddr instead of u32
 static CLIENT_MAP: LazyLock<Mutex<HashMap<u32, Client>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
 fn main() {
