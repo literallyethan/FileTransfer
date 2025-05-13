@@ -21,8 +21,9 @@ impl Client {
 static CLIENT_MAP: LazyLock<Mutex<HashMap<u32, Client>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
 
 fn main() {
+    let bind_addr = std::env::var("BIND_ADDR").unwrap_or("0.0.0.0:8080".to_string());
     // .expect() deals with the result instead of a pattern match
-    let listener: TcpListener = TcpListener::bind("127.0.0.1:8080")
+    let listener: TcpListener = TcpListener::bind(bind_addr)
         .expect("Could not bind!");
 
     loop {
