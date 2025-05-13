@@ -5,19 +5,7 @@ use std::sync::{LazyLock, Mutex, Arc};
 use std::collections::HashMap;
 use dotenv::dotenv;
 use std::env;
-
-struct Client {
-    stream: Arc<TcpStream>, // Arc is like a shared pointer
-    addr: SocketAddr,
-    id: u32,
-    name: String,
-}
-
-impl Client {
-    fn new(stream: Arc<TcpStream>, addr: SocketAddr, id: u32, name: String) -> Self {
-       return Self {stream, addr, id, name};
-    }
-}
+use common::Client;
 
 // lazylock allows list to be sync-safe (I think, never used before)
 static CLIENT_MAP: LazyLock<Mutex<HashMap<u32, Client>>> = LazyLock::new(|| Mutex::new(HashMap::new()));

@@ -3,6 +3,7 @@ use std::net::TcpStream;
 use std::io::Read;
 use dotenv::dotenv;
 use std::env;
+use common::Client;
 
 fn main() {
     dotenv().ok(); // load .env into environment
@@ -34,7 +35,7 @@ fn main() {
                 println!("Received: {}", text);
 
                 // means server is ready to bind client to another
-                if text.eq("Ok!") {
+                if text.contains("Ok!") {
                     handle_peer();
                     break;
                 }
