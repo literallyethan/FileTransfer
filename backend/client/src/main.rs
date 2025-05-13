@@ -1,10 +1,13 @@
 //use core::time;
 use std::net::TcpStream;
 use std::io::Read;
+use dotenv::dotenv;
+use std::env;
 
 fn main() {
-    let addr: &str = "127.0.0.1:8080";
-    let mut stream: TcpStream = TcpStream::connect(addr)
+    dotenv().ok(); // load .env into environment
+    let bind_addr: String = env::var("BIND_ADDR").unwrap_or_else(|_| "127.0.0.1:8080".to_string());
+    let mut stream: TcpStream = TcpStream::connect(bind_addr)
         .expect("Could not connect!");
 
     // have a buffer to read from the stream.

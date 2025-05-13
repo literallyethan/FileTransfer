@@ -3,6 +3,8 @@ use std::thread;
 use std::io::{Write, BufWriter};
 use std::sync::{LazyLock, Mutex, Arc};
 use std::collections::HashMap;
+use dotenv::dotenv;
+use std::env;
 
 struct Client {
     stream: Arc<TcpStream>, // Arc is like a shared pointer
@@ -22,7 +24,9 @@ static CLIENT_MAP: LazyLock<Mutex<HashMap<u32, Client>>> = LazyLock::new(|| Mute
 
 fn main() {
     // .expect() deals with the result instead of a pattern match
-    let listener: TcpListener = TcpListener::bind("127.0.0.1:8080")
+    dotenv().ok(); // load .env into environment
+    let bind_addr: String = env::var("BIND_ADDR").unwrap_or_else(|_| "127.0.0.1:8080".to_string());
+    let listener: TcpListener = TcpListener::bind(bind_addr)
         .expect("Could not bind!");
 
     loop {
