@@ -52,7 +52,7 @@ fn authenticate_client(mut stream: TcpStream, addr: SocketAddr)
         Ok(n) => {
             let text = std::str::from_utf8(&buf[..n]).unwrap_or("[Invalid UTF-8]");
             //TODO: This would be auth info. parse and decrypt to auth
-
+            
         }
         Err(e) => {
             eprintln!("Failed to authenticate: {}", e);
