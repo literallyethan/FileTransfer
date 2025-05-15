@@ -1,4 +1,4 @@
-use std::io::{Error, ErrorKind, Read};
+use std::io::{Error, ErrorKind, Read, Write};
 use std::sync::{LazyLock, Mutex, Arc};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::string::FromUtf8Error;
@@ -25,7 +25,7 @@ pub struct Message {
 impl Message {
     // reads bytes into Message Object assuming Big Endian Byte Order.
     // consider checking for a max length.
-    pub fn from_stream(stream: &mut TcpStream) -> Result<Self, Error> {
+    pub fn from_tcp_stream(stream: &mut TcpStream) -> Result<Self, Error> {
         let mut header_buf: [u8; 4] = [0u8; 4];
         stream.read_exact(&mut header_buf)?;
         
@@ -47,5 +47,14 @@ impl Message {
     pub fn payload_to_string(&self) -> Result<String, FromUtf8Error> {
         let string: Result<String, FromUtf8Error> = String::from_utf8(self.payload.clone());
         return string;
+    }
+
+    pub fn to_tcp_stream(&self, stream: &mut TcpStream) -> std::io::Result<()> {
+        let header_bytes: [u8; 4] = self.header.to_be_bytes();
+        
+        stream.write_all(&header_bytes)?;
+        stream.write_all(&self.payload)?;
+
+        return Ok(());
     }
 }
