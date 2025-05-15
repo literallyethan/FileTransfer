@@ -16,6 +16,21 @@ impl Client {
     }
 }
 
+
+
+/**
+ * Usage:
+ * 1. When sending over the stream, you would make a String with the text you want to send
+ *    and use Message::from_string(str) to get your Message.
+ * 
+ * 2. To send your message, you use msg.to_tcp_stream(stream: TcpStream), [assuming msg: Message].
+ *  
+ * 3. To read a message from the stream, you use Message::from_tcp_stream(stream: &mut TcpStream).
+ *    This gives you a Message object from the bytes read from the stream.
+ * 
+ * 4. To make the contents of the Message readable, you can use msg.payload_to_string().
+ */
+
 pub struct Message {
     // Endianness doesnt matter for strings, only multi-byte numbers
     pub header: u32,
