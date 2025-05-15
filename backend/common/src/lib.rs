@@ -1,6 +1,7 @@
 use std::io::{Error, ErrorKind, Read};
 use std::sync::{LazyLock, Mutex, Arc};
 use std::net::{SocketAddr, TcpListener, TcpStream};
+use std::string::FromUtf8Error;
 
 pub struct Client {
     pub stream: Arc<TcpStream>, // Arc is like a shared pointer
@@ -16,6 +17,7 @@ impl Client {
 }
 
 pub struct Message {
+    // Endianness doesnt matter for strings, only multi-byte numbers
     pub header: u32,
     pub payload: Vec<u8>
 }
@@ -42,7 +44,8 @@ impl Message {
         return Self {header: header_num, payload: vec_buf};
     }
 
-    
-    //TODO: make byte_to_string() which converts BE payload to a comprehendable string
-    //p.s. check if data is BE from a TcpStream by default
+    pub fn payload_to_string(&self) -> Result<String, FromUtf8Error> {
+        let string: Result<String, FromUtf8Error> = String::from_utf8(self.payload.clone());
+        return string;
+    }
 }
