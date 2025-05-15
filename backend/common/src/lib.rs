@@ -34,4 +34,15 @@ impl Message {
 
         return Ok(Self { header: header_length, payload: msg_buf });
     }
+
+    pub fn from_string(string: String) -> Self {
+        let header_num : u32 = string.len() as u32;
+        let vec_buf: Vec<u8> = string.into_bytes();
+        
+        return Self {header: header_num, payload: vec_buf};
+    }
+
+    
+    //TODO: make byte_to_string() which converts BE payload to a comprehendable string
+    //p.s. check if data is BE from a TcpStream by default
 }
