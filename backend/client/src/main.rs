@@ -4,6 +4,7 @@ use std::io::Read;
 use dotenv::dotenv;
 use std::env;
 use common::Client;
+use common::Message;
 use chacha20poly1305::{
     aead::{Aead, KeyInit, OsRng, AeadCore},
     XChaCha20Poly1305,
@@ -27,6 +28,14 @@ fn main() {
 
     // this will happen once authentication goes through.
     loop {
+        let msg: Message = Message::from_tcp_stream(&mut stream)
+            .expect("Failed to read message.");
+
+        let printable: String = msg.payload_to_string()
+            .expect("Invalid UTF8!");
+
+        println!("{}", printable);
+        /* 
         match stream.read(&mut buf) {
             Ok(0) => {
                 println!("Server closed connection.");
@@ -36,17 +45,21 @@ fn main() {
                 let text = std::str::from_utf8(&buf[..n]).unwrap_or("[Invalid UTF-8]");
                 println!("Received: {}", text);
 
+
+                /* 
                 // means server is ready to bind client to another
                 if text.contains("Ok!/") {
                     handle_peer(text.to_string());
                     break;
                 }
+                */
             }
             Err(e) => {
                 println!("Error reading from stream: {}", e);
                 break;
             }
         }
+        */
     }
 }
 
