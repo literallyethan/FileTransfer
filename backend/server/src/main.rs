@@ -78,6 +78,10 @@ fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
             .expect("Failed to write in handle_client");
 
         println!("Sent bytes!");
+        let msg_done: Message = Message::from_string("Done!".to_string());
+         msg_done.to_tcp_stream(&mut stream)
+            .expect("Failed to write in handle_client");
+
     }
 /* 
     let arc_stream: Arc<TcpStream> = Arc::new(stream);
