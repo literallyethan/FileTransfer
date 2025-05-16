@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use dotenv::dotenv;
 use std::env;
 use common::Client;
+use common::Message;
 use chacha20poly1305::{
     aead::{Aead, KeyInit, OsRng, AeadCore},
     XChaCha20Poly1305,
@@ -44,6 +45,7 @@ fn main() {
 
 fn authenticate_client(mut stream: TcpStream, addr: SocketAddr)
 {
+    /* 
     let mut buf = [0u8; 1024];
     match stream.read(&mut buf) {
         Ok(0) => {
@@ -58,7 +60,7 @@ fn authenticate_client(mut stream: TcpStream, addr: SocketAddr)
             eprintln!("Failed to authenticate: {}", e);
         }
     }
-
+    */
     handle_client(stream, addr);
 }
 
@@ -67,19 +69,17 @@ fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
     // in scope to free before handling loop
     {
         let addr_string: String = addr.to_string();
-        let prefix: &str = "Your info: ";
-        // the vec macro is awesome!
-        // vector of byte arrays (&[u8])
-        let parts: Vec<&[u8]> = vec![prefix.as_bytes(), addr_string.as_bytes()];
-        let msg_bytes: Vec<u8> = parts.concat();
-    
-        // ignore output with _
-        let _ = stream.write_all(&msg_bytes)
-            .expect("Failed to write!");
+        let msg_string: String = "Your info: ".to_string();
+        let total_string: String = msg_string + &addr_string;
+
+
+        let msg: Message = Message::from_string(total_string);
+        msg.to_tcp_stream(&mut stream)
+            .expect("Failed to write in handle_client");
 
         println!("Sent bytes!");
     }
-
+/* 
     let arc_stream: Arc<TcpStream> = Arc::new(stream);
     let id: u32 = 0;
     let name: &str = "client0";
@@ -99,5 +99,5 @@ fn handle_client(mut stream: TcpStream, addr: SocketAddr) {
     let mut writer: BufWriter<&TcpStream> = BufWriter::new(arc_stream.as_ref());
     writer.write_all(msg.as_bytes()).expect("Write failed");
     writer.flush().expect("Flush failed");
-
+*/
 }

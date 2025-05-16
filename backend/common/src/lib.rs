@@ -3,6 +3,9 @@ use std::sync::{LazyLock, Mutex, Arc};
 use std::net::{SocketAddr, TcpListener, TcpStream};
 use std::string::FromUtf8Error;
 
+// may reimplement to be
+// addr
+// name
 pub struct Client {
     pub stream: Arc<TcpStream>, // Arc is like a shared pointer
     pub addr: SocketAddr,
