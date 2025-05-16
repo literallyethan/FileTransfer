@@ -19,12 +19,6 @@ fn main() {
     let mut stream: TcpStream = TcpStream::connect(bind_addr)
         .expect("Could not connect!");
 
-    // have a buffer to read from the stream.
-    // convert that buffer to string.
-    // print the string.
-
-    // read() reads bytes as soon as recieved
-    let mut buf = [0u8; 1024];
 
     // this will happen once authentication goes through.
     loop {
@@ -34,6 +28,11 @@ fn main() {
         let printable: String = msg.payload_to_string()
             .expect("Invalid UTF8!");
 
+        if printable == "Done!" {
+            // server is closing
+            break;
+        }
+        
         println!("{}", printable);
         /* 
         match stream.read(&mut buf) {

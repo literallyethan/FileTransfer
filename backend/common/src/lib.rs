@@ -44,6 +44,8 @@ impl Message {
     // reads bytes into Message Object assuming Big Endian Byte Order.
     // consider checking for a max length.
     pub fn from_tcp_stream(stream: &mut TcpStream) -> Result<Self, Error> {
+        // if there are no bytes to be read, this crashes and burns
+
         let mut header_buf: [u8; 4] = [0u8; 4];
         stream.read_exact(&mut header_buf)?;
         
